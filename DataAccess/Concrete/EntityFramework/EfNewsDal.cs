@@ -7,16 +7,15 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfNewsDal : EfEntityRepositoryBase<News, NewsContext>, INewsDal
     {
-        public List<NewsDetailDto> GetNewsDetail()
+
+        public List<NewsDetailDto> GetNewsDetail(int page = 1, int pageSize = 10)
         {
-            using(NewsContext context = new NewsContext())
+            using (NewsContext context = new NewsContext())
             {
                 var result = from n in context.News
-                             join c in context.Categories
-                                on n.CategoryId equals c.Id
-                             join a in context.Authors
-                                on n.AuthorId equals a.Id
-
+                             join c in context.Categories on n.CategoryId equals c.Id
+                             join a in context.Authors on n.AuthorId equals a.Id
+                             orderby n.PublishDate descending
                              select new NewsDetailDto
                              {
                                  Title = n.Title,
@@ -25,9 +24,12 @@ namespace DataAccess.Concrete.EntityFramework
                                  PublishDate = n.PublishDate,
                                  CategoryName = c.Name,
                                  AuthorName = a.FirstName + " " + a.LastName,
-                                 IsActive = n.IsActive
+                                 Status = n.Status.ToString(),
+                                 SpotText = n.SpotText,
+                                 ViewCount = n.ViewCount
                              };
-                return result.ToList();
+
+                return result.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             }
         }
 
@@ -49,7 +51,9 @@ namespace DataAccess.Concrete.EntityFramework
                                  PublishDate = n.PublishDate,
                                  CategoryName = c.Name,
                                  AuthorName = a.FirstName + " " + a.LastName,
-                                 IsActive = n.IsActive
+                                 Status = n.Status.ToString(),
+                                 SpotText = n.SpotText,
+                                 ViewCount = n.ViewCount
                              };
                 return result.ToList();
             }

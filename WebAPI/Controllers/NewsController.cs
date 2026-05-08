@@ -1,5 +1,8 @@
 using Business.Abstract;
+using Core.Utilities.Helpers.FileHelper;
+using Core.Utilities.Results;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
@@ -9,10 +12,12 @@ namespace WebAPI.Controllers
     public class NewsController : ControllerBase
     {
         private readonly INewsService _newsService;
+        private readonly IFileHelper _fileHelper;
 
-        public NewsController(INewsService newsService)
+        public NewsController(INewsService newsService, IFileHelper fileHelper)
         {
             _newsService = newsService;
+            _fileHelper = fileHelper;
         }
 
         [HttpGet("getall")]
@@ -60,9 +65,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("getnewsbydetails")]
-        public IActionResult GetNewsByDetails()
+        public IActionResult GetNewsByDetails([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var result = _newsService.GetNewsDetails();
+            var result = _newsService.GetNewsDetails(page, pageSize);
 
             if (result.Success)
             {
@@ -102,6 +107,13 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        [HttpPost("uploadimage")]
+        public IActionResult UploadImage(IFormFile file)
+        {
+            var filePath = _fileHelper.Upload(file, "wwwroot/uploads/images/");
+            return Ok(new SuccessDataResult<string>(filePath, "Resim yuklendi."));
         }
     }
 } 

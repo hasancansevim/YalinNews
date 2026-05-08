@@ -15,6 +15,8 @@ namespace Entities.DTOs
         public DateTime PublishDate { get; set; }
         public string CategoryName { get; set; }
         public string AuthorName { get; set; }
-        public bool IsActive { get; set; }
+        public string Status { get; set; }
+        public string? SpotText { get; set; }
+        public int ViewCount { get; set; }
     }
 }

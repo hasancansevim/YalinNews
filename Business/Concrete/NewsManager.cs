@@ -82,9 +82,9 @@ namespace Business.Concrete
             return new SuccessDataResult<News>(news);
         }
 
-        public IDataResult<List<NewsDetailDto>> GetNewsDetails()
+        public IDataResult<List<NewsDetailDto>> GetNewsDetails(int page = 1, int pageSize = 10)
         {
-            var result = _newsDal.GetNewsDetail();
+            var result = _newsDal.GetNewsDetail(page, pageSize);
             return new SuccessDataResult<List<NewsDetailDto>>(result);
         }
     }

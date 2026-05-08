@@ -26,6 +26,12 @@ namespace Business.ValidationRules.FluentValidation
 
             RuleFor(n => n.PublishDate)
                 .NotEmpty().WithMessage("Yayın tarihi boş olamaz");
+
+            RuleFor(n => n.SpotText)
+                .MaximumLength(500).WithMessage("Spot metni en fazla 500 karakter olabilir");
+
+            RuleFor(n => n.Status)
+                .IsInEnum().WithMessage("Haber durumu boş olamaz");
         }
     }
 } 

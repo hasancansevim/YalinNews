@@ -6,7 +6,7 @@ namespace DataAccess.Abstract
 {
     public interface INewsDal : IEntityRepository<News>
     {
-        List<NewsDetailDto> GetNewsDetail();
+        List<NewsDetailDto> GetNewsDetail(int page = 1, int pageSize = 10);
         List<NewsDetailDto> GetNewsDetailByCategoryId(int categoryId);
     }
 } 

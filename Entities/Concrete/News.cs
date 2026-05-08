@@ -1,4 +1,5 @@
 using Core.Entities;
+using Entities.Enums;
 using System;
 
 namespace Entities.Concrete
@@ -12,6 +13,8 @@ namespace Entities.Concrete
         public DateTime PublishDate { get; set; }
         public int CategoryId { get; set; }
         public int AuthorId { get; set; }
-        public bool IsActive { get; set; }
+        public NewsStatus Status { get; set; } = NewsStatus.Draft;
+        public string? SpotText { get; set; }
+        public int ViewCount { get; set; } = 0;
     }
 }

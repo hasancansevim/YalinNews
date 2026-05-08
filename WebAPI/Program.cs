@@ -174,6 +174,7 @@ app.UseSwaggerUI();
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 
 // Authentication ve Authorization middleware'lerinin sırası önemli
 app.UseAuthentication();

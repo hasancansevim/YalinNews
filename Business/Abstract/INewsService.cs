@@ -9,7 +9,7 @@ namespace Business.Abstract
     {
         IDataResult<List<News>> GetAll();
         IDataResult<News> GetById(int newsId);
-        IDataResult<List<NewsDetailDto>> GetNewsDetails();
+        IDataResult<List<NewsDetailDto>> GetNewsDetails(int page = 1, int pageSize = 10);
         IDataResult<List<NewsDetailDto>> GetAllByCategoryId(int categoryId);
         IDataResult<List<News>> GetAllByAuthorId(int authorId);
         IDataResult<int> GetCategoryIdByName(string categoryName);
