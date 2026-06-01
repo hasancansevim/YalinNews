@@ -33,7 +33,7 @@ namespace Business.Concrete
             return new SuccessResult(Messages.NewsAdded);
         }
 
-        [SecuredOperation("admin,editor")]
+        //[SecuredOperation("admin,editor")]
         public IResult Update(News news)
         {
             _newsDal.Update(news);

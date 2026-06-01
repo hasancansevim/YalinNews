@@ -7,7 +7,6 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfNewsDal : EfEntityRepositoryBase<News, NewsContext>, INewsDal
     {
-
         public List<NewsDetailDto> GetNewsDetail(int page = 1, int pageSize = 10)
         {
             using (NewsContext context = new NewsContext())
@@ -18,6 +17,10 @@ namespace DataAccess.Concrete.EntityFramework
                              orderby n.PublishDate descending
                              select new NewsDetailDto
                              {
+                                 Id = n.Id,
+                                 CategoryId = n.CategoryId,
+                                 AuthorId = n.AuthorId,
+
                                  Title = n.Title,
                                  Content = n.Content,
                                  ImageUrl = n.ImageUrl,
@@ -38,13 +41,15 @@ namespace DataAccess.Concrete.EntityFramework
             using (NewsContext context = new NewsContext())
             {
                 var result = from n in context.News
-                             join c in context.Categories
-                                on n.CategoryId equals c.Id
-                             join a in context.Authors
-                                on n.AuthorId equals a.Id
+                             join c in context.Categories on n.CategoryId equals c.Id
+                             join a in context.Authors on n.AuthorId equals a.Id
                              where n.CategoryId == categoryId
                              select new NewsDetailDto
-                             {
+                             {                     
+                                 Id = n.Id,
+                                 CategoryId = n.CategoryId,
+                                 AuthorId = n.AuthorId,
+
                                  Title = n.Title,
                                  Content = n.Content,
                                  ImageUrl = n.ImageUrl,
@@ -58,6 +63,5 @@ namespace DataAccess.Concrete.EntityFramework
                 return result.ToList();
             }
         }
-
     }
-} 
+}
