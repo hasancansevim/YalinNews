@@ -37,12 +37,11 @@ builder.Services.AddDbContext<NewsContext>(options =>
 // CORS yapılandırması
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("https://yalinnews.vercel.app", "http://localhost:4200")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
@@ -82,13 +81,12 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// CORS middleware'ini en başa al
-app.UseCors("AllowFrontend");
+app.UseRouting();
 
-// app.UseHttpsRedirection();
+app.UseCors("AllowAll");
+
 app.UseStaticFiles();
 
-// Authentication ve Authorization middleware'lerinin sırası önemli
 app.UseAuthentication();
 app.UseAuthorization();
 
