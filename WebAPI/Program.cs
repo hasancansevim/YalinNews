@@ -30,7 +30,7 @@ builder.Services.AddSwaggerGen();
 
 
 builder.Services.AddDbContext<NewsContext>(options =>
-    options.UseNpgsql(builder.Configuration["DB_CONNECTION_STRING"],
+    options.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"],
     b => b.MigrationsAssembly("WebAPI")));
 
 
@@ -48,10 +48,10 @@ builder.Services.AddCors(options =>
 // JWT Authentication yapılandırması
 var tokenOptions = new TokenOptions
 {
-    Audience = builder.Configuration["JWT_AUDIENCE"],
-    Issuer = builder.Configuration["JWT_ISSUER"],
-    AccessTokenExpiration = int.TryParse(builder.Configuration["JWT_EXPIRATION"], out var exp) ? exp : 60,
-    SecurityKey = builder.Configuration["JWT_SECRET_KEY"]
+    Audience = builder.Configuration["TokenOptions:Audience"],
+    Issuer = builder.Configuration["TokenOptions:Issuer"],
+    AccessTokenExpiration = int.TryParse(builder.Configuration["TokenOptions:AccessTokenExpiration"], out var exp) ? exp : 60,
+    SecurityKey = builder.Configuration["TokenOptions:SecurityKey"]
 };
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
