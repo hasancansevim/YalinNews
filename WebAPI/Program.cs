@@ -23,6 +23,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(builder =>
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddMemoryCache();
 
 // Swagger/OpenAPI configuration
 builder.Services.AddEndpointsApiExplorer();

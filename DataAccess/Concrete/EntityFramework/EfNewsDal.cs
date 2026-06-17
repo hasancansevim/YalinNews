@@ -1,7 +1,9 @@
+using Core.Utilities.Helpers;
 using Core.DataAccess.EntityFramework;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
+using Entities.Enums;
 
 namespace DataAccess.Concrete.EntityFramework
 {
@@ -61,6 +63,30 @@ namespace DataAccess.Concrete.EntityFramework
                                  ViewCount = n.ViewCount
                              };
                 return result.ToList();
+            }
+        }
+
+        public List<SitemapNewsDto> GetPublishedNewsForSitemap()
+        {
+            using (NewsContext context = new NewsContext())
+            {
+                var publishedNews = context.News
+                    .Where(n => n.Status == NewsStatus.Published)
+                    .OrderByDescending(n => n.PublishDate)
+                    .Select(n => new
+                    {
+                        n.Slug,
+                        n.Title,
+                        n.PublishDate
+                    })
+                    .ToList();
+
+                return publishedNews.Select(n => new SitemapNewsDto
+                {
+                    Slug = string.IsNullOrWhiteSpace(n.Slug) ? SlugHelper.Generate(n.Title) : n.Slug,
+                    PublishDate = n.PublishDate,
+                    LastModified = n.PublishDate
+                }).ToList();
             }
         }
     }

@@ -8,5 +8,6 @@ namespace DataAccess.Abstract
     {
         List<NewsDetailDto> GetNewsDetail(int page = 1, int pageSize = 10);
         List<NewsDetailDto> GetNewsDetailByCategoryId(int categoryId);
+        List<SitemapNewsDto> GetPublishedNewsForSitemap();
     }
 } 

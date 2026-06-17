@@ -7,21 +7,26 @@ using System.Collections.Generic;
 using Core.Aspects.Autofac.Validation;
 using Business.ValidationRules.FluentValidation;
 using Business.BusinessAspects.Autofac;
-using Core.Aspects.Autofac.Caching;
+using Core.Utilities.Helpers;
 using Entities.DTOs;
-
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Business.Concrete
 {
     public class NewsManager : INewsService
     {
-        private INewsDal _newsDal;
-        private ICategoryService _categoryService;
+        private const string NewsGetAllCacheKey = "news_getall";
+        private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(15);
 
-        public NewsManager(INewsDal newsDal,ICategoryService categoryService)
+        private readonly INewsDal _newsDal;
+        private readonly ICategoryService _categoryService;
+        private readonly IMemoryCache _memoryCache;
+
+        public NewsManager(INewsDal newsDal, ICategoryService categoryService, IMemoryCache memoryCache)
         {
             _newsDal = newsDal;
             _categoryService = categoryService;
+            _memoryCache = memoryCache;
         }
 
         //[SecuredOperation("admin,editor")]
@@ -29,14 +34,26 @@ namespace Business.Concrete
         //[CacheRemoveAspect("INewsService.Get")]
         public IResult Add(News news)
         {
+            if (string.IsNullOrWhiteSpace(news.Slug))
+            {
+                news.Slug = SlugHelper.Generate(news.Title);
+            }
+
             _newsDal.Add(news);
+            InvalidateNewsCaches();
             return new SuccessResult(Messages.NewsAdded);
         }
 
         //[SecuredOperation("admin,editor")]
         public IResult Update(News news)
         {
+            if (string.IsNullOrWhiteSpace(news.Slug))
+            {
+                news.Slug = SlugHelper.Generate(news.Title);
+            }
+
             _newsDal.Update(news);
+            InvalidateNewsCaches();
             return new SuccessResult(Messages.NewsUpdated);
         }
 
@@ -44,14 +61,21 @@ namespace Business.Concrete
         public IResult Delete(News news)
         {
             _newsDal.Delete(news);
+            InvalidateNewsCaches();
             return new SuccessResult(Messages.NewsDeleted);
         }
 
-        [CacheAspect(duration: 10)]
         public IDataResult<List<News>> GetAll()
         {
+            if (_memoryCache.TryGetValue(NewsGetAllCacheKey, out List<News> cachedNews))
+            {
+                return new SuccessDataResult<List<News>>(cachedNews, Messages.NewsListed);
+            }
+
             var result = _newsDal.GetAll();
-            return new SuccessDataResult<List<News>>(result,Messages.NewsListed);
+            _memoryCache.Set(NewsGetAllCacheKey, result, CacheDuration);
+
+            return new SuccessDataResult<List<News>>(result, Messages.NewsListed);
         }
 
         public IDataResult<List<News>> GetAllByAuthorId(int authorId)
@@ -84,8 +108,38 @@ namespace Business.Concrete
 
         public IDataResult<List<NewsDetailDto>> GetNewsDetails(int page = 1, int pageSize = 10)
         {
+            var cacheKey = $"news_details_{page}_{pageSize}";
+
+            if (_memoryCache.TryGetValue(cacheKey, out List<NewsDetailDto> cachedNews))
+            {
+                return new SuccessDataResult<List<NewsDetailDto>>(cachedNews);
+            }
+
             var result = _newsDal.GetNewsDetail(page, pageSize);
+            _memoryCache.Set(cacheKey, result, CacheDuration);
+
             return new SuccessDataResult<List<NewsDetailDto>>(result);
         }
+
+        public IDataResult<List<SitemapNewsDto>> GetPublishedNewsForSitemap()
+        {
+            const string cacheKey = "news_sitemap";
+
+            if (_memoryCache.TryGetValue(cacheKey, out List<SitemapNewsDto> cachedItems))
+            {
+                return new SuccessDataResult<List<SitemapNewsDto>>(cachedItems);
+            }
+
+            var result = _newsDal.GetPublishedNewsForSitemap();
+            _memoryCache.Set(cacheKey, result, CacheDuration);
+
+            return new SuccessDataResult<List<SitemapNewsDto>>(result);
+        }
+
+        private void InvalidateNewsCaches()
+        {
+            _memoryCache.Remove(NewsGetAllCacheKey);
+            _memoryCache.Remove("news_sitemap");
+        }
     }
-} 
+}
