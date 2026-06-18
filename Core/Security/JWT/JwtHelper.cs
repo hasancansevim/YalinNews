@@ -19,10 +19,10 @@ namespace Core.Security.JWT
             Configuration = configuration;
             _tokenOptions = new TokenOptions
             {
-                Audience = Configuration["JWT_AUDIENCE"],
-                Issuer = Configuration["JWT_ISSUER"],
-                AccessTokenExpiration = int.TryParse(Configuration["JWT_EXPIRATION"], out var exp) ? exp : 60,
-                SecurityKey = Configuration["JWT_SECRET_KEY"]
+                Audience = Configuration["TokenOptions:Audience"],
+                Issuer = Configuration["TokenOptions:Issuer"],
+                AccessTokenExpiration = int.TryParse(Configuration["TokenOptions:AccessTokenExpiration"], out var exp) ? exp : 60,
+                SecurityKey = Configuration["TokenOptions:SecurityKey"]
             };
         }
 
