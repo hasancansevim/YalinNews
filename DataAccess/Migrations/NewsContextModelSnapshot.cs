@@ -3,8 +3,8 @@ using System;
 using DataAccess.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -17,22 +17,22 @@ namespace DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Core.Entities.Concrete.OperationClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -43,32 +43,32 @@ namespace DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea");
 
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("bytea");
 
                     b.Property<bool>("Status")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -79,15 +79,15 @@ namespace DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("OperationClaimId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -98,87 +98,227 @@ namespace DataAccess.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Biography")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Authors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Biography = "Yapay zeka, girisimcilik ve urun teknolojileri uzerine yaziyor.",
+                            Email = "hasan.can@yalinnews.com",
+                            FirstName = "Hasan Can",
+                            ImageUrl = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e",
+                            IsActive = true,
+                            LastName = "Sevim"
+                        });
                 });
 
             modelBuilder.Entity("Entities.Concrete.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Teknoloji"
+                        });
+                });
+
+            modelBuilder.Entity("Entities.Concrete.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("NewsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Entities.Concrete.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("NewsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("Entities.Concrete.News", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AuthorId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("PublishDate")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Slug")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpotText")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.ToTable("News");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AuthorId = 1,
+                            CategoryId = 1,
+                            Content = "Yeni nesil arama motorlari, uretebilen yapay zeka ile kullanicilara daha dogrudan ve baglamsal cevaplar sunuyor. Sirketler bu alanda rekabeti hizlandirirken, dogruluk ve guvenilirlik odakli yeni standartlar gelistiriyor.",
+                            ImageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995",
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SpotText = "Arama deneyimi, uretken yapay zeka ile kokten degisiyor.",
+                            Status = 2,
+                            Title = "Yapay Zeka Destekli Arama Motorlari Yeni Doneme Giriyor",
+                            ViewCount = 1240
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AuthorId = 1,
+                            CategoryId = 1,
+                            Content = "Kurumsal ekipler, bulut altyapisinda otomatik olcekleme ve kaynak gozlemlenebilirligi sayesinde giderlerini ciddi oranda azaltmayi hedefliyor. FinOps yaklasimi, teknoloji yonetiminde temel strateji haline geliyor.",
+                            ImageUrl = "https://images.unsplash.com/photo-1451187580459-43490279c0fa",
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SpotText = "FinOps yaklasimi teknoloji sirketlerinin gundeminde ilk sirada.",
+                            Status = 2,
+                            Title = "Bulut Teknolojilerinde Maliyet Optimizasyonu Trendleri",
+                            ViewCount = 980
+                        },
+                        new
+                        {
+                            Id = 3,
+                            AuthorId = 1,
+                            CategoryId = 1,
+                            Content = "Siber tehditlerin artmasi, kurumlari sifir guven yaklasimina yoneltiyor. Kimlik dogrulama, ag segmentasyonu ve surekli izleme mekanizmalari modern guvenlik mimarisinin temeli olarak one cikiyor.",
+                            ImageUrl = "https://images.unsplash.com/photo-1563986768609-322da13575f3",
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SpotText = "Zero Trust, kurumlarin varsayilan guven anlayisini degistiriyor.",
+                            Status = 2,
+                            Title = "Siber Guvenlikte Zero Trust Mimarisi Yayginlasiyor",
+                            ViewCount = 1125
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AuthorId = 1,
+                            CategoryId = 1,
+                            Content = "Avrupa ve Turkiye pazarinda hizli sarj istasyonlarinin uyumlulugunu artirmaya yonelik yeni standartlar hayata geciyor. Bu adim, elektrikli arac kullaniminda altyapi kaygilarini azaltmayi hedefliyor.",
+                            ImageUrl = "https://images.unsplash.com/photo-1593941707882-a5bba14938c7",
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SpotText = "Sarj altyapisinda standartlasma elektrikli arac yayginligini destekliyor.",
+                            Status = 2,
+                            Title = "Elektrikli Arac Ekosistemi Icin Yeni Sarj Standartlari",
+                            ViewCount = 860
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AuthorId = 1,
+                            CategoryId = 1,
+                            Content = "Acik kaynak buyuk dil modeli projeleri, girisimlerin urun gelistirme surelerini kisaltirken maliyetleri de dusuruyor. Topluluk destegiyle guclenen ekosistem, yeni urun fikirlerinin daha hizli test edilmesini sagliyor.",
+                            ImageUrl = "https://images.unsplash.com/photo-1518770660439-4636190af475",
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
+                            SpotText = "Acik kaynak LLM dunyasi, urun inovasyonunu ivmelendiriyor.",
+                            Status = 2,
+                            Title = "Acik Kaynak LLM Projeleri Girisimleri Hizlandiriyor",
+                            ViewCount = 1345
+                        });
                 });
 #pragma warning restore 612, 618
         }

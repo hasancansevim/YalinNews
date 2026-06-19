@@ -33,6 +33,14 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>().SingleInstance();
 
+            // Comment
+            builder.RegisterType<CommentManager>().As<ICommentService>().SingleInstance();
+            builder.RegisterType<EfCommentDal>().As<ICommentDal>().SingleInstance();
+
+            // Favorite
+            builder.RegisterType<FavoriteManager>().As<IFavoriteService>().SingleInstance();
+            builder.RegisterType<EfFavoriteDal>().As<IFavoriteDal>().SingleInstance();
+
             // File Helper
             builder.RegisterType<FileHelperManager>().As<IFileHelper>().SingleInstance();
 

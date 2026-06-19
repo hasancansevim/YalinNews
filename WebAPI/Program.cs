@@ -32,7 +32,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<NewsContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"],
-    b => b.MigrationsAssembly("WebAPI")));
+    b => b.MigrationsAssembly("DataAccess")));
 
 
 // CORS yapılandırması

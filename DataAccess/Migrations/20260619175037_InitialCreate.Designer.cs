@@ -3,17 +3,20 @@ using System;
 using DataAccess.Concrete.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace WebAPI.Migrations
+namespace DataAccess.Migrations
 {
     [DbContext(typeof(NewsContext))]
-    partial class NewsContextModelSnapshot : ModelSnapshot
+    [Migration("20260619175037_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -164,6 +167,51 @@ namespace WebAPI.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Entities.Concrete.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("NewsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Entities.Concrete.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("NewsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("Entities.Concrete.News", b =>
                 {
                     b.Property<int>("Id")
@@ -216,7 +264,7 @@ namespace WebAPI.Migrations
                             CategoryId = 1,
                             Content = "Yeni nesil arama motorlari, uretebilen yapay zeka ile kullanicilara daha dogrudan ve baglamsal cevaplar sunuyor. Sirketler bu alanda rekabeti hizlandirirken, dogruluk ve guvenilirlik odakli yeni standartlar gelistiriyor.",
                             ImageUrl = "https://images.unsplash.com/photo-1677442136019-21780ecad995",
-                            PublishDate = new DateTime(2026, 6, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             SpotText = "Arama deneyimi, uretken yapay zeka ile kokten degisiyor.",
                             Status = 2,
                             Title = "Yapay Zeka Destekli Arama Motorlari Yeni Doneme Giriyor",
@@ -229,7 +277,7 @@ namespace WebAPI.Migrations
                             CategoryId = 1,
                             Content = "Kurumsal ekipler, bulut altyapisinda otomatik olcekleme ve kaynak gozlemlenebilirligi sayesinde giderlerini ciddi oranda azaltmayi hedefliyor. FinOps yaklasimi, teknoloji yonetiminde temel strateji haline geliyor.",
                             ImageUrl = "https://images.unsplash.com/photo-1451187580459-43490279c0fa",
-                            PublishDate = new DateTime(2026, 6, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             SpotText = "FinOps yaklasimi teknoloji sirketlerinin gundeminde ilk sirada.",
                             Status = 2,
                             Title = "Bulut Teknolojilerinde Maliyet Optimizasyonu Trendleri",
@@ -242,7 +290,7 @@ namespace WebAPI.Migrations
                             CategoryId = 1,
                             Content = "Siber tehditlerin artmasi, kurumlari sifir guven yaklasimina yoneltiyor. Kimlik dogrulama, ag segmentasyonu ve surekli izleme mekanizmalari modern guvenlik mimarisinin temeli olarak one cikiyor.",
                             ImageUrl = "https://images.unsplash.com/photo-1563986768609-322da13575f3",
-                            PublishDate = new DateTime(2026, 6, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             SpotText = "Zero Trust, kurumlarin varsayilan guven anlayisini degistiriyor.",
                             Status = 2,
                             Title = "Siber Guvenlikte Zero Trust Mimarisi Yayginlasiyor",
@@ -255,7 +303,7 @@ namespace WebAPI.Migrations
                             CategoryId = 1,
                             Content = "Avrupa ve Turkiye pazarinda hizli sarj istasyonlarinin uyumlulugunu artirmaya yonelik yeni standartlar hayata geciyor. Bu adim, elektrikli arac kullaniminda altyapi kaygilarini azaltmayi hedefliyor.",
                             ImageUrl = "https://images.unsplash.com/photo-1593941707882-a5bba14938c7",
-                            PublishDate = new DateTime(2026, 6, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             SpotText = "Sarj altyapisinda standartlasma elektrikli arac yayginligini destekliyor.",
                             Status = 2,
                             Title = "Elektrikli Arac Ekosistemi Icin Yeni Sarj Standartlari",
@@ -268,7 +316,7 @@ namespace WebAPI.Migrations
                             CategoryId = 1,
                             Content = "Acik kaynak buyuk dil modeli projeleri, girisimlerin urun gelistirme surelerini kisaltirken maliyetleri de dusuruyor. Topluluk destegiyle guclenen ekosistem, yeni urun fikirlerinin daha hizli test edilmesini sagliyor.",
                             ImageUrl = "https://images.unsplash.com/photo-1518770660439-4636190af475",
-                            PublishDate = new DateTime(2026, 6, 17, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PublishDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Utc),
                             SpotText = "Acik kaynak LLM dunyasi, urun inovasyonunu ivmelendiriyor.",
                             Status = 2,
                             Title = "Acik Kaynak LLM Projeleri Girisimleri Hizlandiriyor",
