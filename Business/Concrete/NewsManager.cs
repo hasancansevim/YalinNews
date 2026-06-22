@@ -140,6 +140,9 @@ namespace Business.Concrete
         {
             _memoryCache.Remove(NewsGetAllCacheKey);
             _memoryCache.Remove("news_sitemap");
+            // Clear common paginated detail caches used by the frontend
+            _memoryCache.Remove("news_details_1_50");
+            _memoryCache.Remove("news_details_1_10");
         }
     }
 }
