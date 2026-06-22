@@ -34,16 +34,18 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-if (!string.IsNullOrEmpty(databaseUrl))
+var connStringUrl = !string.IsNullOrEmpty(databaseUrl) ? databaseUrl : connectionString;
+
+if (!string.IsNullOrEmpty(connStringUrl) && connStringUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
 {
-    var databaseUri = new Uri(databaseUrl);
+    var databaseUri = new Uri(connStringUrl);
     var userInfo = databaseUri.UserInfo.Split(':');
     var npgsqlBuilder = new NpgsqlConnectionStringBuilder
     {
         Host = databaseUri.Host,
-        Port = databaseUri.Port,
-        Username = userInfo[0],
-        Password = userInfo[1],
+        Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
+        Username = userInfo.Length > 0 ? userInfo[0] : "",
+        Password = userInfo.Length > 1 ? userInfo[1] : "",
         Database = databaseUri.LocalPath.TrimStart('/'),
         SslMode = SslMode.Require,
         TrustServerCertificate = true
