@@ -28,7 +28,7 @@ namespace DataAccess.Concrete.EntityFramework
         {
             base.OnModelCreating(modelBuilder);
 
-            var publishDate = DateTime.UtcNow.Date;
+            var publishDate = new DateTime(2026, 6, 22, 0, 0, 0, DateTimeKind.Utc);
 
             modelBuilder.Entity<Category>().HasData(
                 new Category
