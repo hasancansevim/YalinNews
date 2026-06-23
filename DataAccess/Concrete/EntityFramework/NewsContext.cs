@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System;
 
+using Microsoft.Extensions.Configuration;
+
 namespace DataAccess.Concrete.EntityFramework
 {
     public class NewsContext : DbContext
@@ -18,9 +20,21 @@ namespace DataAccess.Concrete.EntityFramework
         {
             if (!optionsBuilder.IsConfigured)
             {
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .AddJsonFile($"appsettings.{env}.json", optional: true)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+                var connectionStringConfig = configuration.GetConnectionString("DefaultConnection");
                 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-                var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-                var connStringUrl = !string.IsNullOrEmpty(databaseUrl) ? databaseUrl : connectionString;
+                var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+                
+                var connectionString = "";
+                var connStringUrl = !string.IsNullOrEmpty(databaseUrl) ? databaseUrl : 
+                                    (!string.IsNullOrEmpty(connectionStringConfig) ? connectionStringConfig : dbConnectionString);
 
                 if (!string.IsNullOrEmpty(connStringUrl) && (connStringUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || connStringUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -39,6 +53,10 @@ namespace DataAccess.Concrete.EntityFramework
                         CommandTimeout = 300
                     };
                     connectionString = npgsqlBuilder.ToString();
+                }
+                else if (!string.IsNullOrEmpty(connStringUrl))
+                {
+                    connectionString = connStringUrl;
                 }
 
                 if (string.IsNullOrEmpty(connectionString))
