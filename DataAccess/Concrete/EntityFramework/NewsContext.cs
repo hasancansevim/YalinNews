@@ -10,7 +10,7 @@ namespace DataAccess.Concrete.EntityFramework
         public NewsContext(DbContextOptions<NewsContext> options) : base(options) { }
         public NewsContext() : base(
             new DbContextOptionsBuilder<NewsContext>()
-                .UseNpgsql("Host=aws-0-eu-west-1.pooler.supabase.com;Port=6543;Database=postgres;Username=postgres.szqqppmkpouiqnuwpnpd;Password=YalinNews4897;Pooling=false;Command Timeout=300;")
+                .UseNpgsql("Host=localhost;Database=dummy;Username=postgres;Password=dummy")
                 .Options)
         {
         }
