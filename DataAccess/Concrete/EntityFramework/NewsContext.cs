@@ -2,17 +2,52 @@ using Core.Entities.Concrete;
 using Entities.Concrete;
 using Entities.Enums;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
+using System;
 
 namespace DataAccess.Concrete.EntityFramework
 {
     public class NewsContext : DbContext
     {
         public NewsContext(DbContextOptions<NewsContext> options) : base(options) { }
-        public NewsContext() : base(
-            new DbContextOptionsBuilder<NewsContext>()
-                .UseNpgsql("Host=localhost;Database=dummy;Username=postgres;Password=dummy")
-                .Options)
+        public NewsContext() 
+        { 
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            if (!optionsBuilder.IsConfigured)
+            {
+                var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+                var connStringUrl = !string.IsNullOrEmpty(databaseUrl) ? databaseUrl : connectionString;
+
+                if (!string.IsNullOrEmpty(connStringUrl) && (connStringUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || connStringUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var databaseUri = new Uri(connStringUrl);
+                    var userInfo = databaseUri.UserInfo.Split(':');
+                    var npgsqlBuilder = new NpgsqlConnectionStringBuilder
+                    {
+                        Host = databaseUri.Host,
+                        Port = databaseUri.Port > 0 ? databaseUri.Port : 5432,
+                        Username = userInfo.Length > 0 ? userInfo[0] : "",
+                        Password = userInfo.Length > 1 ? userInfo[1] : "",
+                        Database = databaseUri.LocalPath.TrimStart('/'),
+                        SslMode = SslMode.Require,
+                        TrustServerCertificate = true,
+                        Pooling = false,
+                        CommandTimeout = 300
+                    };
+                    connectionString = npgsqlBuilder.ToString();
+                }
+
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    connectionString = "Host=localhost;Database=dummy;Username=postgres;Password=dummy";
+                }
+
+                optionsBuilder.UseNpgsql(connectionString);
+            }
         }
 
         public DbSet<News> News { get; set; }
