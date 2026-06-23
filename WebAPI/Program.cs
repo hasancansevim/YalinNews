@@ -36,7 +36,7 @@ var connectionString = builder.Configuration["ConnectionStrings:DefaultConnectio
 var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 var connStringUrl = !string.IsNullOrEmpty(databaseUrl) ? databaseUrl : connectionString;
 
-if (!string.IsNullOrEmpty(connStringUrl) && connStringUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase))
+if (!string.IsNullOrEmpty(connStringUrl) && (connStringUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || connStringUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase)))
 {
     var databaseUri = new Uri(connStringUrl);
     var userInfo = databaseUri.UserInfo.Split(':');
