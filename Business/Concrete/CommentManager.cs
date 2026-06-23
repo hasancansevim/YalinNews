@@ -2,6 +2,7 @@ using Business.Abstract;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,9 +34,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Comment>>(_commentDal.GetAll(), "Yorumlar listelendi.");
         }
 
-        public IDataResult<List<Comment>> GetAllByNewsId(int newsId)
+        public IDataResult<List<CommentDetailDto>> GetAllByNewsId(int newsId)
         {
-            return new SuccessDataResult<List<Comment>>(_commentDal.GetAll(c => c.NewsId == newsId).ToList(), "Habere ait yorumlar listelendi.");
+            return new SuccessDataResult<List<CommentDetailDto>>(_commentDal.GetCommentDetails(newsId), "Habere ait yorumlar listelendi.");
         }
 
         public IDataResult<Comment> GetById(int id)

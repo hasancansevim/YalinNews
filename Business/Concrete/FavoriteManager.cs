@@ -2,6 +2,7 @@ using Business.Abstract;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,9 +34,9 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Favorite>>(_favoriteDal.GetAll(f => f.NewsId == newsId).ToList());
         }
 
-        public IDataResult<List<Favorite>> GetAllByUserId(int userId)
+        public IDataResult<List<NewsDetailDto>> GetAllByUserId(int userId)
         {
-            return new SuccessDataResult<List<Favorite>>(_favoriteDal.GetAll(f => f.UserId == userId).ToList());
+            return new SuccessDataResult<List<NewsDetailDto>>(_favoriteDal.GetFavoriteNewsDetails(userId));
         }
     }
 }
