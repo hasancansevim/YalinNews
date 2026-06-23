@@ -48,7 +48,9 @@ if (!string.IsNullOrEmpty(connStringUrl) && connStringUrl.StartsWith("postgres:/
         Password = userInfo.Length > 1 ? userInfo[1] : "",
         Database = databaseUri.LocalPath.TrimStart('/'),
         SslMode = SslMode.Require,
-        TrustServerCertificate = true
+        TrustServerCertificate = true,
+        Pooling = false,
+        CommandTimeout = 300
     };
     connectionString = npgsqlBuilder.ToString();
 }

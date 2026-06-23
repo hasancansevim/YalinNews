@@ -28,6 +28,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getallbynewsid")]
+        public IActionResult GetAllByNewsId(int newsId)
+        {
+            var result = _favoriteService.GetAllByNewsId(newsId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public IActionResult Add(Favorite favorite)
         {
