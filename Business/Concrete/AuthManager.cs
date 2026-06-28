@@ -101,7 +101,7 @@ namespace Business.Concrete
             var resetToken = Guid.NewGuid().ToString("N");
             _memoryCache.Set(resetToken, user.Email, TimeSpan.FromMinutes(15));
 
-            var resetLink = $"https://yalinnews.vercel.app/reset-password?token={resetToken}";
+            var resetLink = $"https://yalinnews.com/reset-password?token={resetToken}";
             
             // LİNKİ LOGLARA YAZDIRIYORUZ (E-posta gitmese bile Render loglarından alınıp test edilebilsin diye)
             Console.WriteLine("=================================================");
