@@ -103,6 +103,11 @@ namespace Business.Concrete
 
             var resetLink = $"https://yalinnews.vercel.app/reset-password?token={resetToken}";
             
+            // LİNKİ LOGLARA YAZDIRIYORUZ (E-posta gitmese bile Render loglarından alınıp test edilebilsin diye)
+            Console.WriteLine("=================================================");
+            Console.WriteLine($"[DİKKAT] ŞİFRE SIFIRLAMA LİNKİ: {resetLink}");
+            Console.WriteLine("=================================================");
+
             var emailBody = $@"
                 <h3>Şifre Sıfırlama Talebi</h3>
                 <p>YalınNews hesabınızın şifresini sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>
