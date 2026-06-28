@@ -6,16 +6,22 @@ using Core.Security.JWT;
 using Core.Utilities.Results;
 using Entities.DTOs;
 
+using Microsoft.Extensions.Caching.Memory;
+
 namespace Business.Concrete
 {
     public class AuthManager : IAuthService
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
-        public AuthManager(IUserService userService,ITokenHelper tokenHelper)
+        private IEmailService _emailService;
+        private IMemoryCache _memoryCache;
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IEmailService emailService, IMemoryCache memoryCache)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+            _emailService = emailService;
+            _memoryCache = memoryCache;
         }
 
         public IDataResult<AccessToken> CreateAccessToken(User user)
@@ -81,6 +87,56 @@ namespace Business.Concrete
             }
 
             return new SuccessResult(Messages.UserAlreadyExists);
+        }
+
+        public IResult ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+        {
+            var user = _userService.GetByMail(forgotPasswordDto.Email).Data;
+            if (user == null)
+            {
+                // Return success even if user not found to prevent email enumeration
+                return new SuccessResult("Eğer sistemimizde kayıtlı bir e-posta adresi girdiyseniz, şifre sıfırlama bağlantısı gönderilmiştir.");
+            }
+
+            var resetToken = Guid.NewGuid().ToString("N");
+            _memoryCache.Set(resetToken, user.Email, TimeSpan.FromMinutes(15));
+
+            var resetLink = $"https://yalinnews.vercel.app/reset-password?token={resetToken}";
+            
+            var emailBody = $@"
+                <h3>Şifre Sıfırlama Talebi</h3>
+                <p>YalınNews hesabınızın şifresini sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>
+                <p><a href='{resetLink}'>{resetLink}</a></p>
+                <p>Bu bağlantı 15 dakika süreyle geçerlidir.</p>";
+
+            _emailService.SendEmail(user.Email, "YalınNews Şifre Sıfırlama", emailBody);
+
+            return new SuccessResult("Eğer sistemimizde kayıtlı bir e-posta adresi girdiyseniz, şifre sıfırlama bağlantısı gönderilmiştir.");
+        }
+
+        public IResult ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            if (!_memoryCache.TryGetValue(resetPasswordDto.Token, out string email))
+            {
+                return new ErrorResult("Geçersiz veya süresi dolmuş bir şifre sıfırlama bağlantısı kullandınız.");
+            }
+
+            var user = _userService.GetByMail(email).Data;
+            if (user == null)
+            {
+                return new ErrorResult(Messages.UserNotFound);
+            }
+
+            byte[] passwordHash, passwordSalt;
+            HashingHelper.CreatePasswordHash(resetPasswordDto.NewPassword, out passwordHash, out passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            _userService.Update(user);
+            _memoryCache.Remove(resetPasswordDto.Token);
+
+            return new SuccessResult("Şifreniz başarıyla güncellendi.");
         }
     }
 } 

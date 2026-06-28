@@ -56,5 +56,27 @@ namespace WebAPI.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("forgot-password")]
+        public ActionResult ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+        {
+            var result = _authService.ForgotPassword(forgotPasswordDto);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        public ActionResult ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var result = _authService.ResetPassword(resetPasswordDto);
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+            return Ok(result);
+        }
     }
 } 

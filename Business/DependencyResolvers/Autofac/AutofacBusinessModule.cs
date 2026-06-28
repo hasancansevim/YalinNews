@@ -50,6 +50,9 @@ namespace Business.DependencyResolvers.Autofac
             // File Helper
             builder.RegisterType<FileHelperManager>().As<IFileHelper>().SingleInstance();
 
+            // Email Service
+            builder.RegisterType<EmailManager>().As<IEmailService>().SingleInstance();
+
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
