@@ -29,8 +29,9 @@ namespace Business.Concrete
 
                 using (var client = new SmtpClient(host, port))
                 {
-                    client.Credentials = new NetworkCredential(email, password);
+                    client.Credentials = new NetworkCredential(email, password?.Replace(" ", ""));
                     client.EnableSsl = true;
+                    client.Timeout = 15000; // 15 saniye timeout
 
                     var mailMessage = new MailMessage
                     {
@@ -45,10 +46,16 @@ namespace Business.Concrete
                     client.Send(mailMessage);
                 }
 
+                Console.WriteLine($"[EmailManager] E-posta başarıyla gönderildi: {toEmail}");
                 return new SuccessResult("E-posta başarıyla gönderildi.");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[EmailManager ERROR] E-posta gönderilemedi! Hata: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"[EmailManager ERROR Detay] {ex.InnerException.Message}");
+                }
                 return new ErrorResult($"E-posta gönderilirken bir hata oluştu: {ex.Message}");
             }
         }
