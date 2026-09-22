@@ -16,6 +16,7 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = from n in context.News
                              join c in context.Categories on n.CategoryId equals c.Id
                              join a in context.Authors on n.AuthorId equals a.Id
+                             where n.Status == NewsStatus.Published
                              orderby n.PublishDate descending
                              select new NewsDetailDto
                              {
